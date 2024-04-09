@@ -49,3 +49,13 @@ create index PSO_GNR on public.PSO (GNR);
 create index PSO_OGRNIP on public.PSO (OGRNIP);
 create unique index PSO_SNILS_ID on public.ORG (SNILS, ID_OBJ);
 -------------------------------------------------
+CREATE TABLE public.AUD_EVT (
+	ID              int primary key not null,
+	EVT_TYP         varchar(256) NOT NULL,
+	R_OBJ           varchar(256) not NULL,
+    MSG             varchar(256),
+    CRT_ON          timestamp with local time zone,
+    CONSTRAINT evt_obj_fk FOREIGN KEY (R_OBJ) REFERENCES public.obj(id)
+);
+create index AUD_EVT_R_OBJ on public.AUD_EVT (R_OBJ);
+-------------------------------------------------
