@@ -12,7 +12,7 @@ CREATE TABLE public.OBJ (
 create unique index OBJ_ID_OBJ_TYP on public.OBJ (ID, OBJ_TYP);
 create unique index OBJ_OID_UN on public.OBJ ("OID");
 -------------------------------------------------
-CREATE TABLE public.org (
+CREATE TABLE public.ORG (
 	id_obj          int primary key not null,
 	sht_nam         varchar(500) NOT NULL,
 	inn             varchar(256) not NULL,
@@ -58,4 +58,45 @@ CREATE TABLE public.AUD_EVT (
     CONSTRAINT evt_obj_fk FOREIGN KEY (R_OBJ) REFERENCES public.obj(id)
 );
 create index AUD_EVT_R_OBJ on public.AUD_EVT (R_OBJ);
+-------------------------------------------------
+CREATE TABLE public.DOC (
+	id              int primary key not null,
+	doc_typ         varchar(256) NOT NULL,
+    ser             varchar(256) not NULL,
+    num             varchar(256) not NULL,
+    iss_by          varchar(1000),
+    iss_dat         date,
+	iss_plc         char(3) not NULL,
+    exp_dat         date,
+    r_obj           int not NULL,
+    dsc             varchar2(255),
+	CRT_ON          timestamp with local time zone,          
+    UPD_ON          timestamp with local time zone,
+	doc_photo       varchar2(1000),
+    CONSTRAINT doc_obj_fk FOREIGN KEY (r_obj) REFERENCES public.obj(id) on delete cascade,
+);
+create unique index DOC_PKX on public.DOC (ID);
+create index DOC_SER_NUM_TYPE on public.DOC (SER,NUM,DOC_TYP);
+create index DOC_SER_NUM_TYPE2 on public.DOC (NUM,SER,DOC_TYP);
+create unique index ROBJ_DOCTYP_UNIQUE on public.DOC (R_OBJ,DOC_TYP);
+-------------------------------------------------
+CREATE TABLE public.STF (
+	id              int primary key not null,
+	pos             varchar(256),
+    dpt             varchar(256),
+    stu             char(1) not NULL,
+    r_org           int not NULL,
+    r_pso           int not NULL,
+    CRT_ON          timestamp with local time zone,          
+    UPD_ON          timestamp with local time zone,
+	dsc             char(3) not NULL,
+    chf             char(1) not NULL,
+    constraint CK_STF_STU check (GNR in ('A', 'B'))
+    constraint CK_STF_CHF check (GNR in ('Y', 'N'))
+    CONSTRAINT stf_org_fk FOREIGN KEY (r_org) REFERENCES public.oorg(id_obj) on delete cascade,
+    CONSTRAINT doc_pso_fk FOREIGN KEY (r_obj) REFERENCES public.pso(id_obj) on delete cascade,
+);
+create unique index STF_ORG_PSO on public.STF (R_PSO,R_ORG);
+create index STF_PSO on public.STF (R_PSO);
+create unique index STF_PKX on public.STF (ID);
 -------------------------------------------------
